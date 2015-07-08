@@ -39,7 +39,7 @@ class MyTests(unittest.TestCase):
     def test_get_with_params(self):
         results = self.cc.get('Contact', contact_id=2)
         result = results[0]
-        self.assertEquals(result['sort_name'], 'Terry, Brittney')
+        self.assertEqual(result['sort_name'], 'Terry, Brittney')
 
     def test_get_with__multiple_params(self):
         results = self.cc.get('Contact', **{'contact_type': 'Individual',
@@ -49,12 +49,12 @@ class MyTests(unittest.TestCase):
     def test_get_with_limit_offset(self):
         results = self.cc.get('Contact', **{'contact_type': 'Individual','Country' : 'United States', 'limit': 2, 'offset': 0})
         result = results[0]
-        self.assertEquals(result['sort_name'], 'Terry, Brittney')
-        self.assertEquals(len(results), 2)
+        self.assertEqual(result['sort_name'], 'Terry, Brittney')
+        self.assertEqual(len(results), 2)
 
     def test_get_null_set(self):
         results = self.cc.get('Contact', contact_id=100000)
-        self.assertEquals(results, [])
+        self.assertEqual(results, [])
 
     def test_get_invalid_option(self):
         self.assertRaises(CivicrmError,self.cc.get,
@@ -62,7 +62,7 @@ class MyTests(unittest.TestCase):
 
     def test_getsingle(self):
         results = self.cc.getsingle('Contact',contact_id=2)
-        self.assertEquals(results['sort_name'], 'Terry, Brittney')
+        self.assertEqual(results['sort_name'], 'Terry, Brittney')
 
     def test_getsingle_multiple_results(self):
         self.assertRaises(CivicrmError, self.cc.getsingle,
@@ -70,8 +70,8 @@ class MyTests(unittest.TestCase):
 
     def test_getvalue(self):
         results = self.cc.getvalue('Contact', 'sort_name', contact_id=2)
-        self.assertEquals(type(results), unicode)
-        self.assertEquals(results, 'Terry, Brittney')
+        self.assertEqual(type(results), str)
+        self.assertEqual(results, 'Terry, Brittney')
 
     def test_getvalue_multiple_results(self):
         self.assertRaises(CivicrmError, self.cc.getvalue,
@@ -81,13 +81,13 @@ class MyTests(unittest.TestCase):
         results = self.cc.create('Contact',
                 contact_type='individual', display_name='bar, foo')
         self.cc.delete('Contact', results[0]['id'], True)
-        self.assertEquals(results[0]['display_name'], 'bar, foo')
+        self.assertEqual(results[0]['display_name'], 'bar, foo')
 
     def test_delete(self):
         cresults = self.cc.create('Contact',
                 contact_type='individual', display_name='bar, foo')
         results = self.cc.delete('Contact', cresults[0]['id'], True)
-        self.assertEquals(results, 1)
+        self.assertEqual(results, 1)
 
     def test_update(self):
         cresults = self.cc.create('Contact',
@@ -95,7 +95,7 @@ class MyTests(unittest.TestCase):
         myid = cresults[0]['id']
         results = self.cc.update('Contact', myid, display_name='foo, bar')
         self.cc.delete('Contact', myid, True)
-        self.assertEquals(results[0]['display_name'], 'foo, bar')
+        self.assertEqual(results[0]['display_name'], 'foo, bar')
 
     def test_setvalue(self):
         cresults = self.cc.create('Contact',
@@ -104,12 +104,12 @@ class MyTests(unittest.TestCase):
         results = self.cc.setvalue('Contact', myid,
                 'display_name', 'foo, bar')
         self.cc.delete('Contact', myid, True)
-        self.assertEquals(results['display_name'], 'foo, bar')
+        self.assertEqual(results['display_name'], 'foo, bar')
 
 
     def test_getcount(self):
         count = self.cc.getcount('Contact', contact_id=2)
-        self.assertEquals(count, 1)
+        self.assertEqual(count, 1)
 
     def test_getfields(self):
         results = self.cc.getfields('Contact')
@@ -130,26 +130,26 @@ class MyTests(unittest.TestCase):
         results =  self.cc.add_contact(
                 contact_type='Individual', display_name='test')
         self.cc.delete('Contact', results['id'], True)
-        self.assertEquals(results['display_name'], 'test')
+        self.assertEqual(results['display_name'], 'test')
 
     def test_add_contact_required_field_missing(self):
-        self.assertRaisesRegexp(CivicrmError, 'fields must exist',
+        self.assertRaisesRegex(CivicrmError, 'fields must exist',
                 self.cc.add_contact, contact_type='Individual')
 
     def test_add_contact_wrong_type(self):
-        self.assertRaisesRegexp(CivicrmError,' not a valid option',
+        self.assertRaisesRegex(CivicrmError,' not a valid option',
                 self.cc.add_contact, 'not a contact type',
                 display_name='test')
 
     def test_add_relationship_by_id(self):
         result = self.cc.add_relationship(101, 102, 1)
         self.cc.delete('Relationship', result['id'], True)
-        self.assertEquals(result['relationship_type_id'], '1')
+        self.assertEqual(result['relationship_type_id'], '1')
 
     def test_add_relationship_by_type(self):
         result = self.cc.add_relationship(101, 102, 'Partner of')
         self.cc.delete('Relationship', result['id'], True)
-        self.assertEquals(result['relationship_type_id'], '3')
+        self.assertEqual(result['relationship_type_id'], '3')
 
     def test_add_relationship_type_not_found(self):
         self.assertRaises(CivicrmError,
@@ -166,14 +166,14 @@ class MyTests(unittest.TestCase):
         result = self.cc.add_activity(1, self.contact_id,
                 subject = "test", status = 2,  is_test=1)
         self.cc.delete('Activity', result['id'], True)
-        self.assertEquals(result['activity_type_id'], '1')
+        self.assertEqual(result['activity_type_id'], '1')
 
     def test_add_activity_by_status_type(self):
         result = self.cc.add_activity("Meeting", self.contact_id,
                 subject = "test", activity_status = "Completed",
                 status = "Cancelled",  is_test=1)
         self.cc.delete('Activity', result['id'], True)
-        self.assertEquals(result['activity_type_id'], '1')
+        self.assertEqual(result['activity_type_id'], '1')
 
     def test_add_activity_invalid_label(self):
         self.assertRaises(CivicrmError,
@@ -193,13 +193,13 @@ class MyTests(unittest.TestCase):
     def test_add_contribution_by_id(self):
         result = self.cc.add_contribution(self.contact_id, 100, 1, is_test=1)
         self.cc.delete('Contribution', result['id'], True)
-        self.assertEquals(result['total_amount'], '100')
+        self.assertEqual(result['total_amount'], '100')
 
     def test_add_contribution_by_type(self):
         result = self.cc.add_contribution(self.contact_id,
                 100, 'Donation', is_test=1)
         self.cc.delete('Contribution', result['id'], True)
-        self.assertEquals(result['total_amount'], '100')
+        self.assertEqual(result['total_amount'], '100')
 
     def test_add_contribution_invalid_financial_type(self):
         self.assertRaises(CivicrmError,
@@ -209,7 +209,7 @@ class MyTests(unittest.TestCase):
     def test_add_email(self):
         result = self.cc.add_email(self.contact_id, 'test@example.org')
         self.cc.delete('Email', result['id'], True)
-        self.assertEquals(result['email'], 'test@example.org')
+        self.assertEqual(result['email'], 'test@example.org')
 
     def test_add_email_is_not_email_like(self):
         self.assertRaises(CivicrmError, self.cc.add_email,
@@ -218,56 +218,56 @@ class MyTests(unittest.TestCase):
     def test_add_note(self):
         result = self.cc.add_note(self.contact_id, 'test')
         self.cc.delete('Note', result['id'], True)
-        self.assertEquals(result['note'], 'test')
+        self.assertEqual(result['note'], 'test')
 
     def test_add_tag(self):
         result = self.cc.add_tag('test')
         self.cc.delete('Tag', result['id'], True)
-        self.assertEquals(result['name'], 'test')
+        self.assertEqual(result['name'], 'test')
 
     def test_add_entity_tag(self):
         result = self.cc.add_entity_tag(self.contact_id, 1)
         self.cc.doaction('delete', 'EntityTag', tag_id=1,
                 entity_id=202)
-        self.assertEquals(result['added'], 1)
+        self.assertEqual(result['added'], 1)
 
     def test_add_group(self):
         result = self.cc.add_group(title='test')
         self.cc.delete('Group', result['id'], True)
-        self.assertEquals(result['title'], 'test')
+        self.assertEqual(result['title'], 'test')
 
     def test_add_group_contact(self):
         result = self.cc.add_group_contact(self.contact_id, 5)
         self.cc.doaction('delete', 'GroupContact', group_id=5,
                 contact_id=self.contact_id)
-        self.assertEquals(result['added'], 1)
+        self.assertEqual(result['added'], 1)
 
     def test_add_phone(self):
         result = self.cc.add_phone(self.contact_id, '111-111-1111')
         self.cc.delete('Phone', result['id'], True)
-        self.assertEquals(result['phone'], '111-111-1111')
+        self.assertEqual(result['phone'], '111-111-1111')
 
     def test_add_address_by_location_type_id(self):
         result = self.cc.add_address(self.contact_id, 1)
         self.cc.delete('Address', result['id'], True)
-        self.assertEquals(result['location_type_id'], '1')
+        self.assertEqual(result['location_type_id'], '1')
 
     def test_add_address_by_location_type(self):
         result = self.cc.add_address(self.contact_id, 'Home')
         self.cc.delete('Address', result['id'], True)
-        self.assertEquals(result['location_type_id'], '1')
+        self.assertEqual(result['location_type_id'], '1')
 
     def test_matches_required_no_match(self):
         required = ['exists']
         params = {'does not exist' : True}
         results = matches_required(required, params)
-        self.assertEquals(results, ['exists'])
+        self.assertEqual(results, ['exists'])
 
     def test_matches_required_matches(self):
         required = ['exists']
         params = {'exists' : True}
         results = matches_required(required, params)
-        self.assertEquals(results, None)
+        self.assertEqual(results, None)
 
 
 if __name__ == '__main__':

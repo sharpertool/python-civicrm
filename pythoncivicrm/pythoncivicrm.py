@@ -106,7 +106,7 @@ what you are doing in this case, and we can save an extra API call for speed.
 getaction if you must.
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+
 
 import re
 import requests
@@ -252,7 +252,7 @@ class CiviCRM:
         Takes key=value pairs from dictionary kwargs  and uses them
         to extend the params dictionary.
         """
-        for key, value in kwargs.items():
+        for key, value in list(kwargs.items()):
             if value:
                 option = "options[%s]" % key
                 params.update({option: value})
@@ -282,7 +282,7 @@ class CiviCRM:
                                % (entity, field))
         # swap keys & values for lookup keys are labels
         labels = dict((value, key) for key, value
-                      in options.items())
+                      in list(options.items()))
         if type(value) is int and str(value) in options:
             return value
         elif value in labels:

@@ -77,28 +77,28 @@ class CiviCRMTests(unittest.TestCase):
 
     def test_add_options(self):
         results = self.cc._add_options({}, limit=1,offset=0)
-        expected = {u'options[limit]' : 1, u'options[offset]' : 0}
-        self.assertEquals(expected['options[limit]'], 1)
+        expected = {'options[limit]' : 1, 'options[offset]' : 0}
+        self.assertEqual(expected['options[limit]'], 1)
 
     def test_add_single_option(self):
         results = self.cc._add_options({}, limit=1)
-        self.assertEquals(len(results), 1)
+        self.assertEqual(len(results), 1)
 
     def test__construct_payload_get(self):
         payload = self.cc._construct_payload('get', 'get', 'Contact',
                 {'json' : 0, 'contact_id': 2})
-        self.assertEquals(payload['json'], 1)
-        self.assertEquals(payload['contact_id'], 2)
+        self.assertEqual(payload['json'], 1)
+        self.assertEqual(payload['contact_id'], 2)
 
     def test__construct_payload_post(self):
         payload = self.cc._construct_payload('post', 'create', 'Contact',
                 {'json' : 0, 'contact_id': 2})
-        self.assertEquals(payload['json'], 1)
-        self.assertEquals(payload['contact_id'], 2)
+        self.assertEqual(payload['json'], 1)
+        self.assertEqual(payload['contact_id'], 2)
 
     def test__check_results(self):
         results = self.cc._check_results({'is_error' : 0, 'result' : 1})
-        self.assertEquals(results, 1)
+        self.assertEqual(results, 1)
 
     def test__check_results_raises_exception(self):
         self.assertRaises(CivicrmError, self.cc._check_results,
@@ -107,7 +107,7 @@ class CiviCRMTests(unittest.TestCase):
     def test_is_valid_option_id_is_valid(self):
         result = self.cc.is_valid_option(
                 'Activity', 'activity_is_test', 0)
-        self.assertEquals(result, 0)
+        self.assertEqual(result, 0)
 
     def test_is_valid_option_id_is_not_valid(self):
         self.assertRaises(CivicrmError, self.cc.is_valid_option,
@@ -116,7 +116,7 @@ class CiviCRMTests(unittest.TestCase):
     def test_is_valid_option_label_is_valid(self):
         result = self.cc.is_valid_option(
                 'Activity', 'activity_is_test', 'Yes')
-        self.assertEquals(result, '1')
+        self.assertEqual(result, '1')
 
     def test_is_valid_option_label_is_not_valid(self):
         self.assertRaises(CivicrmError, self.cc.is_valid_option,
@@ -130,13 +130,13 @@ class CiviCRMTests(unittest.TestCase):
         required = ['exists']
         params = {'does not exist' : True}
         results = matches_required(required, params)
-        self.assertEquals(results, ['exists'])
+        self.assertEqual(results, ['exists'])
 
     def test_matches_required_matches(self):
         required = ['exists']
         params = {'exists' : True}
         results = matches_required(required, params)
-        self.assertEquals(results, None)
+        self.assertEqual(results, None)
 
     # Methods calling requests
 
@@ -203,8 +203,8 @@ class CiviCRMTests(unittest.TestCase):
         mock_requests.get.return_value.content = \
             """{"is_error":0,"result":"Test, Test"}"""
         results = self.cc.getvalue('Contact', 'sort_name', contact_id=1)
-        self.assertEquals(type(results), unicode)
-        self.assertEquals(results, 'Test, Test')
+        self.assertEqual(type(results), str)
+        self.assertEqual(results, 'Test, Test')
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     def test_getvalue_multiple_results(self, mock_requests):
@@ -224,7 +224,7 @@ class CiviCRMTests(unittest.TestCase):
         mock_requests.post.return_value.content = self.results
         results = self.cc.create('Contact',
                 contact_type='individual', display_name='bar, foo')
-        self.assertEquals(results[0]['display_name'], 'bar, foo')
+        self.assertEqual(results[0]['display_name'], 'bar, foo')
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     def test_delete(self, mock_requests):
@@ -232,14 +232,14 @@ class CiviCRMTests(unittest.TestCase):
         mock_requests.post.return_value.content =\
             """{"is_error":0,"version":3,"count":1,"values":1}"""
         results = self.cc.delete('Contact', 2, True)
-        self.assertEquals(results, 1)
+        self.assertEqual(results, 1)
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     def test_update(self, mock_requests):
         mock_requests.post.return_value.status_code = 200
         mock_requests.post.return_value.content = self.results
         results = self.cc.update('Contact', 2, display_name='bar, foo')
-        self.assertEquals(results[0]['display_name'], 'bar, foo')
+        self.assertEqual(results[0]['display_name'], 'bar, foo')
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     def test_setvalue(self, mock_requests):
@@ -252,7 +252,7 @@ class CiviCRMTests(unittest.TestCase):
             "values":{"id":"2","display_name":"foo,bar"}
         }"""
         results = self.cc.setvalue('Contact', 2, 'display_name', 'foo, bar')
-        self.assertEquals(results['display_name'], 'foo,bar')
+        self.assertEqual(results['display_name'], 'foo,bar')
 
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
@@ -261,7 +261,7 @@ class CiviCRMTests(unittest.TestCase):
         mock_requests.get.return_value.content =\
                 """{"is_error":0,"result":1}"""
         count = self.cc.getcount('Contact', contact_id=1)
-        self.assertEquals(count, 1)
+        self.assertEqual(count, 1)
 
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
@@ -302,10 +302,10 @@ class CiviCRMTests(unittest.TestCase):
         mock_requests.post.return_value.content = self.results
         results =  self.cc.add_contact(
                 contact_type='Individual', display_name='bar, foo')
-        self.assertEquals(results['display_name'], 'bar, foo')
+        self.assertEqual(results['display_name'], 'bar, foo')
 
     def test_add_contact_required_field_missing(self):
-        self.assertRaisesRegexp(CivicrmError, 'fields must exist',
+        self.assertRaisesRegex(CivicrmError, 'fields must exist',
                 self.cc.add_contact, contact_type='Individual')
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
@@ -320,7 +320,7 @@ class CiviCRMTests(unittest.TestCase):
             "is_error":1,
             "error_message":"'not a contact type' is not a valid option for field contact_type"
         }"""
-        self.assertRaisesRegexp(CivicrmError,' not a valid option',
+        self.assertRaisesRegex(CivicrmError,' not a valid option',
                 self.cc.add_contact, 'not a contact type',
                 display_name='test')
 
@@ -347,7 +347,7 @@ class CiviCRMTests(unittest.TestCase):
             "case_id":""}]
         }"""
         result = self.cc.add_relationship(101, 102, 1)
-        self.assertEquals(result['relationship_type_id'], '1')
+        self.assertEqual(result['relationship_type_id'], '1')
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     def test_add_relationship_by_type(self, mock_requests):
@@ -380,8 +380,8 @@ class CiviCRMTests(unittest.TestCase):
         mock_requests.post.return_value.content = result2
         result = self.cc.add_relationship(101, 102, 'Partner of')
         call = mock_requests.post.call_args[1]['data']['relationship_type_id']
-        self.assertEquals(call, '3')
-        self.assertEquals(result['relationship_type_id'], '3')
+        self.assertEqual(call, '3')
+        self.assertEqual(result['relationship_type_id'], '3')
 
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
@@ -430,7 +430,7 @@ class CiviCRMTests(unittest.TestCase):
             }"""
         result = self.cc.add_activity(1, self.contact_id,
                 subject = "test", status = 2,  is_test=1)
-        self.assertEquals(result['activity_type_id'], '1')
+        self.assertEqual(result['activity_type_id'], '1')
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     @mock.patch.object(CiviCRM, "is_valid_option")
@@ -456,7 +456,7 @@ class CiviCRMTests(unittest.TestCase):
         result = self.cc.add_activity("Meeting", self.contact_id,
                 subject = "test", activity_status = "Completed",
                 status = "Cancelled",  is_test=1)
-        self.assertEquals(result['activity_type_id'], '1')
+        self.assertEqual(result['activity_type_id'], '1')
 
     @mock.patch.object(CiviCRM, "is_valid_option")
     def test_add_activity_invalid_label(self, mock_is_valid):
@@ -528,7 +528,7 @@ class CiviCRMTests(unittest.TestCase):
         """
         self.cc.is_valid_option = mock.MagicMock()
         result = self.cc.add_contribution(self.contact_id, 100, 1, is_test=1)
-        self.assertEquals(result['total_amount'], '100')
+        self.assertEqual(result['total_amount'], '100')
         assert not self.cc.is_valid_option.called
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
@@ -566,7 +566,7 @@ class CiviCRMTests(unittest.TestCase):
         self.cc.is_valid_option = mock.MagicMock()
         result = self.cc.add_contribution(self.contact_id,
                 100, 'Donation', is_test=1)
-        self.assertEquals(result['total_amount'], '100')
+        self.assertEqual(result['total_amount'], '100')
         self.cc.is_valid_option.assert_called_with(
             'Contribution', 'financial_type_id', 'Donation')
 
@@ -605,7 +605,7 @@ class CiviCRMTests(unittest.TestCase):
         }
         """
         result = self.cc.add_email(self.contact_id, 'test@example.org')
-        self.assertEquals(result['email'], 'test@example.org')
+        self.assertEqual(result['email'], 'test@example.org')
 
     def test_add_email_is_not_email_like(self):
         self.assertRaises(CivicrmError, self.cc.add_email,
@@ -630,7 +630,7 @@ class CiviCRMTests(unittest.TestCase):
         }
         """
         result = self.cc.add_note(self.contact_id, 'test')
-        self.assertEquals(result['note'], 'test')
+        self.assertEqual(result['note'], 'test')
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     def test_add_tag(self, mock_requests):
@@ -650,7 +650,7 @@ class CiviCRMTests(unittest.TestCase):
         }
         """
         result = self.cc.add_tag('test')
-        self.assertEquals(result['name'], 'test')
+        self.assertEqual(result['name'], 'test')
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     def test_add_entity_tag(self, mock_requests):
@@ -658,7 +658,7 @@ class CiviCRMTests(unittest.TestCase):
         mock_requests.post.return_value.content =\
             """{"is_error":0,"not_added":0,"added":1,"total_count":1}"""
         result = self.cc.add_entity_tag(self.contact_id, 1)
-        self.assertEquals(result['added'], 1)
+        self.assertEqual(result['added'], 1)
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     def test_add_group(self, mock_requests):
@@ -677,7 +677,7 @@ class CiviCRMTests(unittest.TestCase):
         }
         """
         result = self.cc.add_group(title='test')
-        self.assertEquals(result['title'], 'test')
+        self.assertEqual(result['title'], 'test')
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     def test_add_group_contact(self, mock_requests):
@@ -685,7 +685,7 @@ class CiviCRMTests(unittest.TestCase):
         mock_requests.post.return_value.content =\
             """{"is_error":0,"not_added":0,"added":1,"total_count":1}"""
         result = self.cc.add_group_contact(self.contact_id, 5)
-        self.assertEquals(result['added'], 1)
+        self.assertEqual(result['added'], 1)
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     def test_add_phone(self, mock_requests):
@@ -709,7 +709,7 @@ class CiviCRMTests(unittest.TestCase):
         }
         """
         result = self.cc.add_phone(self.contact_id, '111-111-1111')
-        self.assertEquals(result['phone'], '111-111-1111')
+        self.assertEqual(result['phone'], '111-111-1111')
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
     def test_add_address_by_location_type_id(self, mock_requests):
@@ -732,7 +732,7 @@ class CiviCRMTests(unittest.TestCase):
         """
         self.cc.is_valid_option = mock.MagicMock()
         result = self.cc.add_address(self.contact_id, 1)
-        self.assertEquals(result['location_type_id'], '1')
+        self.assertEqual(result['location_type_id'], '1')
         assert not self.cc.is_valid_option.called
 
     @mock.patch("pythoncivicrm.pythoncivicrm.requests")
@@ -771,7 +771,7 @@ class CiviCRMTests(unittest.TestCase):
         """
         self.cc.is_valid_option = mock.MagicMock()
         result = self.cc.add_address(self.contact_id, 'Home')
-        self.assertEquals(result['location_type_id'], '1')
+        self.assertEqual(result['location_type_id'], '1')
         self.cc.is_valid_option.assert_called_with(
             'Address', 'location_type_id', 'Home')
 
