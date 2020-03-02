@@ -189,7 +189,7 @@ class CiviCRM:
         payload = {
             'key': self.site_key,
             'api_key': self.api_key,
-            'json': 1,
+            'json': '',
             'entity': entity,
             'action': action
         }
@@ -212,8 +212,12 @@ class CiviCRM:
         # add in parameters
         payload.update(parameters)
         # add sequential:1 if not set (override with sequential:0)
-        if 'sequential' not in payload:
-            payload['sequential'] = 1
+        if 'sequential' not in parameters:
+            parameters['sequential'] = 1
+
+        # add in parameters
+        payload['json'] = json.dumps(parameters)
+
         return payload
 
     def _construct_payload(self, use, action, entity, parameters):
@@ -251,10 +255,12 @@ class CiviCRM:
         Takes key=value pairs from dictionary kwargs  and uses them
         to extend the params dictionary.
         """
+
+        params['options'] = {}
         for key, value in list(kwargs.items()):
             if value:
-                option = "options[%s]" % key
-                params.update({option: value})
+                params['options'][key] = value
+
         return params
 
     def _check_results(self, results):
