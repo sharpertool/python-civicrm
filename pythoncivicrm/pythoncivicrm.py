@@ -308,7 +308,8 @@ class CiviCRM:
         """
         limit = kwargs.pop('limit', None)
         offset = kwargs.pop('offset', None)
-        params = self._add_options(kwargs, limit=limit, offset=offset)
+        sort = kwargs.pop('sort', None)
+        params = self._add_options(kwargs, limit=limit, offset=offset, sort=sort)
         return self._get('get', entity, params)
 
     def getsingle(self, entity, **kwargs):
